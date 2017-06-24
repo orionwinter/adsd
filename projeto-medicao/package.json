@@ -1,0 +1,26 @@
+{
+  "name": "projeto-medicao",
+  "version": "0.0.0",
+  "description": "Projeto de medição",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/odwl66/adsd.git"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/odwl66/adsd/issues"
+  },
+  "homepage": "https://github.com/odwl66/adsd#readme",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "dependencies": {
+    "dateformat": "^2.0.0",
+    "fs": "0.0.1-security"
+  }
+}
