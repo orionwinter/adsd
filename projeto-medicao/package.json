@@ -21,6 +21,8 @@
   },
   "dependencies": {
     "dateformat": "^2.0.0",
-    "fs": "0.0.1-security"
+    "fs": "0.0.1-security",
+    "request": "^2.81.0",
+    "request-promise": "^4.2.1"
   }
 }
