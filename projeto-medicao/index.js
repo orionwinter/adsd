@@ -1,6 +1,8 @@
 var fs = require("fs"),
     rp = require("request-promise");
 
+var argument = process.argv.slice(2, 3);
+
 var appendOnFile = function(before, gotError, i) {
     var after = new Date();
 
@@ -27,8 +29,12 @@ var makeRequest = function(i) {
         });
 };
 
+if (argument == "") {argument = 5;}
+
+console.log("Irei executar " + argument + " requisições");
+
 // TODO: Fazer a quantidade de requisições por minuto necessárias
-for (var i = 0; i < 10; i++) {
+for (var i = 0; i < Number(argument); i++) {
     makeRequest(i);
 }
 
