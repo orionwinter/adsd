@@ -1,12 +1,14 @@
 var fs = require("fs"),
     rp = require("request-promise");
 
+var start = new Date();
+
 var argument = process.argv.slice(2, 3);
 
 var appendOnFile = function(before, gotError, i) {
     var after = new Date();
 
-    var text = i + "," + Number(before) + "," + Number(after) + "," + Number(after - before) + "," + gotError + "\n";
+    var text = Number(start) + "," + argument + "," + i + "," + Number(before) + "," + Number(after) + "," + Number(after - before) + "," + gotError + "\n";
 
     fs.appendFile(__dirname + "/output.csv", text, function(err) {
         if(err) {
@@ -33,7 +35,6 @@ if (argument == "") {argument = 5;}
 
 console.log("Irei executar " + argument + " requisições");
 
-// TODO: Fazer a quantidade de requisições por minuto necessárias
 for (var i = 0; i < Number(argument); i++) {
     makeRequest(i);
 }
