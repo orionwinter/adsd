@@ -1,0 +1,18 @@
+---
+title: "Projeto de Medição"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE}
+library(dplyr, warn.conflicts = FALSE)
+library(ggplot2)
+theme_set(theme_bw())
+```
+
+```{r}
+output = read.csv("~/ufcg/adsd/projeto-medicao/output.csv",  encoding="UTF-8")
+```
