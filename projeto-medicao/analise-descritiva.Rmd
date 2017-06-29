@@ -4,15 +4,50 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 ```
 
-```{r echo=FALSE}
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
 library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
+library(lubridate)
 theme_set(theme_bw())
 ```
 
-```{r}
-output = read.csv("~/ufcg/adsd/projeto-medicao/output.csv",  encoding="UTF-8")
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+output <- read.csv("output.csv",  encoding="UTF-8")
+
+data <- output %>% 
+  mutate(
+    datetime = as.POSIXct(start_timestamp / 1000, origin="1970-01-01"),
+    days = day(datetime),
+    months = month(datetime),
+    hours = hour(datetime),
+    minutes = minute(datetime),
+    seconds = second(datetime)
+  ) %>%
+  mutate(
+    hours = ifelse(hours <= 14, 10, 22)
+  )
 ```
+
+Inicialmente é verificado o tempo de resposta, sem levar em consideração os fatores, e o quanto ele varia:
+
+```{r}
+ggplot(data, aes("Time difference", time_diff)) +
+  geom_boxplot()
+
+summary(data$time_diff)
+sd(data$time_diff)
+```
+
+Como é possível ver acima, o tempo de resposta varia bastante, onde sua média é de 23,2 segundos, mediana de 20,1 e desvio padrão de 13,3. Os valores do primeiro e terceiro quartil são de 10,5 e 38,7 segundos, os quais se aproxímam bastante do número de iterações utilizados na medição (10 e 40).
+
+A segui é possível ver a distribuição destes dados:
+
+```{r}
+ggplot(data, aes(time_diff)) +
+  geom_histogram(bins = 15)
+```
+
+É possível ver que a distribuição é multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.
