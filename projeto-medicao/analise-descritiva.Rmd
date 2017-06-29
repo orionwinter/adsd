@@ -27,7 +27,8 @@ data <- output %>%
     seconds = second(datetime)
   ) %>%
   mutate(
-    hours = ifelse(hours <= 14, 10, 22)
+    hours = ifelse(hours <= 14, 10, 22),
+    n_instances = ifelse(days == 27, 1, 2)
   )
 ```
 
@@ -41,7 +42,7 @@ summary(data$time_diff)
 sd(data$time_diff)
 ```
 
-Como é possível ver acima, o tempo de resposta varia bastante, onde sua média é de 23,2 segundos, mediana de 20,1 e desvio padrão de 13,3. Os valores do primeiro e terceiro quartil são de 10,5 e 38,7 segundos, os quais se aproxímam bastante do número de iterações utilizados na medição (10 e 40).
+Como é possível ver acima, o tempo de resposta varia bastante, onde sua média é de 23,2 segundos, mediana de 20,1 e desvio padrão de 13,3. Os valores do primeiro e terceiro quartil são de 10,5 e 38,7 segundos, os quais se aproxímam bastante do número de requisições por minuto utilizados na medição (10 e 40).
 
 A segui é possível ver a distribuição destes dados:
 
@@ -51,3 +52,47 @@ ggplot(data, aes(time_diff)) +
 ```
 
 É possível ver que a distribuição é multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.
+
+Abaixo vamos verificar como cada conjunto de fatores se comporta, onde cada um será representado cada um número:
+
+```{r}
+data <- data %>% 
+  mutate(
+    group = ifelse(n_instances == 1, 
+                   ifelse(n_iterations == 10, 
+                          ifelse(hours == 10, 1, 2),
+                          ifelse(hours == 10, 3, 4)
+                          ),
+                   ifelse(n_iterations == 10, 
+                          ifelse(hours == 10, 5, 6),
+                          ifelse(hours == 10, 7, 8)
+                          )
+                   )
+  )
+```
+
+```{r}
+data %>% select(n_instances, n_iterations, hours, group) %>% distinct() %>% arrange(group)
+```
+
+A seguir, será verificado se existe relação entre os fatores escolhidos e o tempo de resposta:
+
+```{r}
+ggplot(data, aes(as.factor(group), time_diff)) +
+  geom_boxplot()
+```
+
+É possível verificar que a hora não influencia no tempo de resposta, visto que os grupos 1 e 2 tem horas diferentes, mas variam os demais fatores, o que também ocorre com os grupos 3 e 4, 5 e 6, 7 e 8. 
+
+É possível ver que o número de requisições por minuto é um fator que causa bastante impacto no tempo de resposta, visto que conservando os demais fatores e variando o número de requisições, o tempo de resposta diferencia bastante, como podemos ver nos grupos 1 e 3, 2 e 4, 5 e 7, 6 e 8. 
+
+É possível identificar também que o número de instancias utilizadas na medição influencia bastante o tempo de resposta, visto que fixando os demais fatores e mudando apenas o número de instâncias, o tempo de resposta varia bastante, como pode ser verificado nos grupos 1 e 5, 2 e 6, 3 e 7, 4 e 8.
+
+-- Mostrar distribuição de cada grupo 
+
+-- Mostrar o intervalo de confiança do tempo de resposta para cada grupo
+
+-- Mostrar que primeiras requisições são mais rápidas que as demais (que dá para pegar pelo curr_iteration)
+
+-- Mais análises que queiram
+
