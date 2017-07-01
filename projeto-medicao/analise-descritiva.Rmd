@@ -13,9 +13,91 @@ library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 library(lubridate)
 library(resample)
+library(gtable)
+library(grid)
+
 
 theme_set(theme_bw())
 ```
+
+```{r}
+
+label.geral.top <- function(distribuicao) {
+  
+  ## Para adicionar o label geral
+  distribuicao.grob = ggplotGrob(distribuicao)
+  #  New strip at the top
+  distribuicao.grob <- gtable_add_rows(distribuicao.grob, distribuicao.grob$height[6], pos = 5)  # New row added below row 5
+  # Check the layout
+  gtable_show_layout(distribuicao.grob)   # New strip goes into row 6 
+                        # New strip spans columns 4 to 8
+  distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
+    list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
+       textGrob("Número de Instâncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
+
+  # Add small gap between strips - below row 6
+  distribuicao.grob <- gtable_add_rows(distribuicao.grob, unit(2/10, "line"), 6)
+  
+  # Draw it
+  ##grid.draw(distribuicao.grob)
+  
+  return(distribuicao.grob)
+}
+
+label.geral.top.e.right <- function(distribuicao) {
+  
+    ## Para adicionar o label geral
+  distribuicao.grob = ggplotGrob(distribuicao)
+  #  New strip at the top
+  distribuicao.grob <- gtable_add_rows(distribuicao.grob, distribuicao.grob$height[6], pos = 5)  # New row added below row 5
+  distribuicao.grob <- gtable_add_cols(distribuicao.grob, distribuicao.grob$widths[7], pos = 7)  # New column added to the right of column 5
+
+  # Check the layout
+  gtable_show_layout(distribuicao.grob)   # New strip goes into row 6 
+                        # New strip spans columns 4 to 8
+  distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
+    list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
+       textGrob("Número de Instâncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
+  
+  distribuicao.grob<- gtable_add_grob(distribuicao.grob, 
+    list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
+       textGrob("Nº de Requisições / min", rot = -90)), 
+    t=5, l=8, b=10, r=9, name = c("a", "b"))
+
+  # Add small gap between strips - below row 6
+  distribuicao.grob <- gtable_add_rows(distribuicao.grob, unit(2/10, "line"), 6)
+    distribuicao.grob <- gtable_add_cols(distribuicao.grob, unit(2/10, "line"), 7)
+
+  return (distribuicao.grob)
+}
+  
+  
+
+label.geral.right <- function(distribuicao, nome){
+  
+  distribuicao.grob <- ggplotGrob(distribuicao)
+
+  #  New strip to the right
+  distribuicao.grob <- gtable_add_cols(distribuicao.grob, distribuicao.grob$widths[7], pos = 7)  # New column added to the right of column 5
+
+  # Check the layout
+  gtable_show_layout(distribuicao.grob)   # New strip goes into column 6 
+                        # New strip spans rows 6 to 10
+  distribuicao.grob<- gtable_add_grob(distribuicao.grob, 
+    list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
+       textGrob(nome, rot = -90)), 
+    t=5, l=8, b=10, r=9, name = c("a", "b"))
+
+  # Add small gap between strips - to the right of column 5
+  distribuicao.grob <- gtable_add_cols(distribuicao.grob, unit(2/10, "line"), 7)
+
+  # Draw it
+  ##grid.draw(distribuicao.grob)
+  return (distribuicao.grob)
+}
+
+```
+
 
 ###Descrição do sistema  
   O sistema que decidimos avaliar é um serviço de predição utilizado pelo aplicativo Melhor Busão, aplicativo criado com o intuito de melhorar a experiência dos usuários de transporte público, inicialmente da cidade de Campina Grande - PB e Curitiba - PR.  
@@ -92,28 +174,35 @@ data <- output %>%
   )
 ```
 
-Inicialmente Ã© verificado o tempo de resposta, sem levar em consideraÃ§Ã£o os fatores, e o quanto ele varia:
+Inicialmente é verificado o tempo de resposta, sem levar em consideração os fatores, e o quanto ele varia:
 
 ```{r}
 ggplot(data, aes("Time difference", time_diff)) +
-  geom_boxplot()
+  geom_boxplot()+
+  labs(y="Tempo de Resposta (ms)")
 
 summary(data$time_diff)
 sd(data$time_diff)
 ```
 
-Como Ã© possÃ­vel ver acima, o tempo de resposta varia bastante, onde sua mÃ©dia Ã© de 23,2 segundos, mediana de 20,1 e desvio padrÃ£o de 13,3. Os valores do primeiro e terceiro quartil sÃ£o de 10,5 e 38,7 segundos, os quais se aproxÃ­mam bastante do nÃºmero de requisiÃ§Ãµes por minuto utilizados na mediÃ§Ã£o (10 e 40).
+Como é possível ver acima, o tempo de resposta varia bastante, onde sua média é de 23,2 segundos, mediana de 20,1 segundos e desvio padrão de 13,3 segundos. Os valores do primeiro e terceiro quartil são de 10,5 e 38,7 segundos, os quais se aproxímam bastante do número de requisições por minuto utilizados na medição (10 e 40).
 
-A segui Ã© possÃ­vel ver a distribuiÃ§Ã£o destes dados:
+--------------
+
+A seguir é possível ver a distribuição destes dados:
 
 ```{r}
 ggplot(data, aes(time_diff)) +
-  geom_histogram(bins = 15)
+  geom_histogram(bins = 15) +
+  labs(x = "Tempo de resposta") +
+  ggtitle("Histograma de distribuição dos dados")
 ```
 
-Ã‰ possÃ­vel ver que a distribuiÃ§Ã£o Ã© multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.
+É possível ver que a distribuição é multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.
 
-Abaixo vamos verificar como cada conjunto de fatores se comporta, onde cada um serÃ¡ representado cada um nÃºmero:
+-----------
+
+Abaixo vamos verificar como cada conjunto de fatores se comporta, onde cada um será representado por cada número:
 
 ```{r}
 data <- data %>% 
@@ -132,43 +221,63 @@ data <- data %>%
 ```
 
 ```{r}
-data %>% select(n_instances, n_iterations, hours, group) %>% distinct() %>% arrange(group)
+data.group = data %>% select(n_instances, n_iterations, hours, group) %>% distinct() %>% arrange(group)
+colnames(data.group) <- c("Nº de Instâncias", "Nº de Requisições / min", "Horário", "Grupo")
+data.group
 ```
 
-A seguir, serÃ¡ verificado se existe relaÃ§Ã£o entre os fatores escolhidos e o tempo de resposta:
+A seguir, vamos verificar como é o comportamento de cada conjunto de fatores que foram definidos acima, e se existe relação entre os fatores escolhidos e o tempo de resposta:
+
+-------------------
 
 ```{r}
 ggplot(data, aes(as.factor(group), time_diff)) +
-  geom_boxplot()
-```
+  geom_boxplot() +
+  labs(x="Grupos", y="Tempo de Resposta")+
+  ggtitle("Gráfico de relação entre fatores e tempo de resposta")	
 
-Ã‰ possÃ­vel verificar que a hora nÃ£o influencia no tempo de resposta, visto que os grupos 1 e 2 tem horas diferentes, mas variam os demais fatores, o que tambÃ©m ocorre com os grupos 3 e 4, 5 e 6, 7 e 8. 
-
-Ã‰ possÃ­vel ver que o nÃºmero de requisiÃ§Ãµes por minuto Ã© um fator que causa bastante impacto no tempo de resposta, visto que conservando os demais fatores e variando o nÃºmero de requisiÃ§Ãµes, o tempo de resposta diferencia bastante, como podemos ver nos grupos 1 e 3, 2 e 4, 5 e 7, 6 e 8. 
-
-Ã‰ possÃ­vel identificar tambÃ©m que o nÃºmero de instancias utilizadas na mediÃ§Ã£o influencia bastante o tempo de resposta, visto que fixando os demais fatores e mudando apenas o nÃºmero de instÃ¢ncias, o tempo de resposta varia bastante, como pode ser verificado nos grupos 1 e 5, 2 e 6, 3 e 7, 4 e 8.
-
-
-```{r}
 #Summary de cada grupo
-#tapply(data$time_diff,data$group,summary) 
+tapply(data$time_diff,data$group,summary)
+tapply(data$time_diff,data$group,sd)
+
+
 ```
 
-___
+
+É possível verificar que a hora não influencia no tempo de resposta, visto que os grupos 1 e 2 tem horas diferentes, mas variam os demais fatores, o que também ocorre com os grupos 3 e 4, 5 e 6, 7 e 8. 
+
+É possível ver que o número de requisições por minuto é um fator que causa bastante impacto no tempo de resposta, visto que conservando os demais fatores e variando o número de requisições, o tempo de resposta diferencia bastante, como podemos ver nos grupos 1 e 3, 2 e 4, 5 e 7, 6 e 8. 
+
+É possível identificar também que o número de instâncias utilizadas na medição influencia bastante o tempo de resposta, visto que fixando os demais fatores e mudando apenas o número de instâncias, o tempo de resposta varia bastante, como pode ser verificado nos grupos 1 e 5, 2 e 6, 3 e 7, 4 e 8.
+
+-----
+
 Vamos verificar como é a distribuição do tempo de resposta, avaliando o número de instâncias, número de requisições e o horário do experimento.
 
 ```{r}
-ggplot(data, aes(x=factor(n_iterations), y=time_diff,fill=factor(hours))) +
+distribuicao.num.instancias = ggplot(data, aes(x=factor(n_iterations), y=time_diff,fill=factor(hours))) +
   geom_bar(stat = "identity", position = "dodge") +
   facet_grid(~n_instances) +
-  labs(y="Tempo de requisição", fill="Horário do experimento", x= "Número de requisições por minuto")
+  labs(y="Tempo de Resposta", fill="Horário do Experimento", x= "Número de requisições por minuto")
+
+## Para adicionar o label geral
+grid.draw(label.geral.top(distribuicao.num.instancias))
+
+
 ```
 
 
 ```{r}
-ggplot(data, aes(time_diff, fill=factor(hours))) +
+distribuicao.geral = ggplot(data, aes(time_diff, fill=factor(hours))) +
   geom_histogram(bins = 10, position = "dodge")+ facet_grid(n_iterations~n_instances)   +
-  labs(x="Tempo de resposta de requisição", fill="Hora do experimento")
+  labs(x="Tempo de Resposta", fill="Horário do experimento")
+
+## Para adicionar o label geral
+#label.top = label.geral.top(distribuicao.geral)
+
+grid.draw(label.geral.top.e.right(distribuicao.geral))
+
+
 ```
 
 -- Mostrar o intervalo de confiança do tempo de resposta para cada grupo
@@ -194,9 +303,7 @@ df = data.frame(rbind(mean.time,
 
 df$medida = row.names(df)
 
-df %>% 
-  
-  ggplot(aes(x = medida, ymin = X2.5., ymax = X97.5.)) + 
+df %>% ggplot(aes(x = medida, ymin = X2.5., ymax = X97.5.)) + 
   geom_errorbar(width = .2)
 
 ```
