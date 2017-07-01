@@ -1,5 +1,6 @@
 ---
-title: "Projeto de MediÃ§Ã£o"
+title: "Projeto de Medição"
+author: "Aline Costa - Rafaelle Amorim - Órion Darshan Winter"
 output: html_document
 ---
 
@@ -11,8 +12,64 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
 library(lubridate)
+library(resample)
+
 theme_set(theme_bw())
 ```
+
+###Descrição do sistema  
+  O sistema que decidimos avaliar é um serviço de predição utilizado pelo aplicativo Melhor Busão, aplicativo criado com o intuito de melhorar a experiência dos usuários de transporte público, inicialmente da cidade de Campina Grande - PB e Curitiba - PR.  
+  O serviço ter como função principal prever a quantidade de passageiros e a duração de uma viagem de ônibus de um dado usuário.    Para realizar tal função, o serviço pede os dados da rota do ônibus, parada de início, data e hora da viagem e, através de técnicas de aprendizado de máquina, prevê a quantidade de passageiros e a duração da viagem passada.  
+  Este serviço está hospedado em um máquina virtual no Laboratório de Sistemas Distribuídos (LSD), localizado na Universidade Federal de Campina Grande (UFCG).
+  
+###Objetivo  
+  Decidimos avaliar o sistema quanto ao critério de Escalabilidade, pois é um aspecto de extrema importância no desenvolvimento de sistemas em geral. Em especial para a nossa aplicação, que deverá ser implantada em breve e espera-se que ela consiga trabalhar normalmente mesmo com uma demanda crescente de usuários.  
+  Para isso, nossa avaliação terá como principal atividade o aumento da quantidade de requisições a que o sistema é submetido e iremos analisar como se comporta o tempo de respostas às requisições diante desse aumento.  
+  Além da quantidade de requisições, iremos avaliar o impacto da variação da mudança no horário no qual as requisições serão feitas (10hrs e 22hrs, aproximadamente) e se o número de instâncias rodando o serviço pode influenciar na escalabilidade do sistema. 
+
+###Especificação de Ambiente  
+	Para realizar as medições, vamos utilizar uma máquina de 64 bits, com processador Intel® CoreT i5-3570 CPU @ 3.40GHz × 4, memória de 12GB, rodando em cima do sistema operacional Ubuntu 16.04. A rede que será utilizada na medição tem velocidade declarada de 10 Gbps.
+
+###Definição de Métricas  
+	Para realizarmos nossa avaliação, vamos utilizar as seguintes variáveis de resposta (métricas) :
+* Tempo de Resposta de Requisição:  
+  Para isso vamos usar um medidor de timestamp e calcular o tempo discorrido entre o envio das requisições e o recebimento das respostas enviadas pelo servidor. Para eliminar fatores secundários que possam influenciar na nossa análise, iremos realizar X repetições para cada bloco de variáveis e as requisições realizadas serão sempre do tipo GET. 
+* Tempo de Resposta da Rede:  
+  A medição será realizada de forma ativa, já que as requisições serão injetadas no sistema para a verificação do seu comportamento quando ocorrer variação desse número.
+
+###Definição de Fatores e Níveis
+
+	As métricas tempo de resposta de requisição e tempo de resposta da rede serão utilizados para avaliar a escalabilidade do sistema, quando existe variação no número de instâncias rodando, número de requisições e horário das requisições.  
+  Os níveis de cada fator serão definidos de acordo com os seguintes valores:  
+* Número de Instâncias:  
+  1 instância  
+  2 instâncias
+* Números de Requisições:  
+  10/min  
+  40/min
+* Horário das Requisições:  
+  10h - 11h  
+  22h - 23h
+  
+  A combinação dos fatores e seus níveis será executada como mostra a tabela abaixo. Realizaremos 3 medições de cada tipo nos horários mencionados durante 3 dias alternados. 
+  
+  Medição | Instâncias | Requisições/min | Horário
+  --------|------------|-----------------|--------
+     1    |     1      |        10       |  10h~11h
+     2    |     1      |        10       |  22h~23h
+     3    |     1      |        40       |  10h~11h
+     4    |     1      |        40       |  22h~23h
+     5    |     2      |        10       |  10h~11h
+     6    |     2      |        10       |  22h~23h
+     7    |     2      |        40       |  10h~11h
+     8    |     2      |        40       |  22h~23h
+
+###Experimentos
+
+	As requisições realizadas, foram geradas __bold__ (EXPLICAR O SCRIPT) __bold__ .
+Durante a primeira execução do experimento, os níveis do fator "Números de Requisições" foram 100/s e 1000/s mas pudemos perceber que devido a quantidade de requisições sendo realizadas, o serviço não conseguiu responder à todas elas __bold__(EXPLICAR MELHOR?) __bold__, para que fosse possível obter resultados e analisá-los, foram avaliados alguns níveis, até obtermos os valores de 10/min e 40/min. 
+
+-----------
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 output <- read.csv("output.csv",  encoding="UTF-8")
@@ -88,11 +145,74 @@ ggplot(data, aes(as.factor(group), time_diff)) +
 
 Ã‰ possÃ­vel identificar tambÃ©m que o nÃºmero de instancias utilizadas na mediÃ§Ã£o influencia bastante o tempo de resposta, visto que fixando os demais fatores e mudando apenas o nÃºmero de instÃ¢ncias, o tempo de resposta varia bastante, como pode ser verificado nos grupos 1 e 5, 2 e 6, 3 e 7, 4 e 8.
 
--- Mostrar distribuiÃ§Ã£o de cada grupo 
 
--- Mostrar o intervalo de confianÃ§a do tempo de resposta para cada grupo
+```{r}
+#Summary de cada grupo
+#tapply(data$time_diff,data$group,summary) 
+```
 
--- Mostrar que primeiras requisiÃ§Ãµes sÃ£o mais rÃ¡pidas que as demais (que dÃ¡ para pegar pelo curr_iteration)
+___
+Vamos verificar como é a distribuição do tempo de resposta, avaliando o número de instâncias, número de requisições e o horário do experimento.
+
+```{r}
+ggplot(data, aes(x=factor(n_iterations), y=time_diff,fill=factor(hours))) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(~n_instances) +
+  labs(y="Tempo de requisição", fill="Horário do experimento", x= "Número de requisições por minuto")
+```
+
+
+```{r}
+ggplot(data, aes(time_diff, fill=factor(hours))) +
+  geom_histogram(bins = 10, position = "dodge")+ facet_grid(n_iterations~n_instances)   +
+  labs(x="Tempo de resposta de requisição", fill="Hora do experimento")
+```
+
+-- Mostrar o intervalo de confiança do tempo de resposta para cada grupo
+
+
+```{r}
+experiment = sample_n(data, 500, replace = TRUE)
+
+b = experiment %>%
+  group_by(group) %>%
+  bootstrap(mean(time_diff), R = 500)
+
+mean.boot= bootstrap(experiment, mean(time_diff), R = 500)
+mean.time = CI.bca(mean.boot, probs = c(.025, .975))
+mean.time
+
+median.boot = bootstrap(experiment, median(time_diff))
+median.time = CI.percentile(median.boot, probs = c(.025, .975))
+median.time 
+
+df = data.frame(rbind(mean.time, 
+                      median.time))
+
+df$medida = row.names(df)
+
+df %>% 
+  
+  ggplot(aes(x = medida, ymin = X2.5., ymax = X97.5.)) + 
+  geom_errorbar(width = .2)
+
+```
+
+
+Agora iremos analisar o tempo de resposta das requisição levando em conta a "posição" da requisição (a primeira requisição, segunda, terceira..) 
+
+```{r}
+# Mostrar que primeiras requisiÃ§Ãµes sÃ£o mais rÃ¡pidas que as demais (que dÃ¡ para pegar pelo curr_iteration)
+
+data.first.iterations <- data %>%
+  group_by(curr_iteration)
+
+ggplot(data.first.iterations,aes(x=curr_iteration, y=time_diff)) +
+  geom_bar(stat = "identity")+
+  facet_grid(~n_instances)
+
+```
+
 
 -- Mais anÃ¡lises que queiram
 
