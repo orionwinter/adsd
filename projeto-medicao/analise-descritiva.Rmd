@@ -124,15 +124,15 @@ label.geral.right <- function(distribuicao, nome){
 	As métricas tempo de resposta de requisição e tempo de resposta da rede serão utilizados para avaliar a escalabilidade do sistema, quando existe variação no número de instâncias rodando, número de requisições e horário das requisições.  
   Os níveis de cada fator serão definidos de acordo com os seguintes valores:
   
-* Número de Instâncias:  
-  1 instância  
-  2 instâncias
-* Números de Requisições:  
-  10/min  
-  40/min
-* Horário das Requisições:  
-  10h - 11h  
-  22h - 23h
+1. Número de Instâncias: 
+   * 1 instância  
+   * 2 instâncias
+2. Números de Requisições:  
+   * 10/min  
+   * 40/min
+3. Horário das Requisições:  
+   * 10h - 11h  
+   * 22h - 23h
   
   A combinação dos fatores e seus níveis será executada como mostra a tabela abaixo. Realizaremos 3 medições de cada tipo nos horários mencionados durante 3 dias alternados. 
   
@@ -150,11 +150,13 @@ label.geral.right <- function(distribuicao, nome){
 ###Experimentos
 
 	As requisições realizadas, foram geradas ##(EXPLICAR O SCRIPT)## .
-Durante a primeira execução do experimento, os níveis do fator "Números de Requisições" foram 100/s e 1000/s mas pudemos perceber que devido a quantidade de requisições sendo realizadas, o serviço não conseguiu responder à todas elas ##(EXPLICAR MELHOR?)##, para que fosse possível obter resultados e analisá-los, foram avaliados alguns níveis, até obtermos os valores de 10/min e 40/min. 
+Inicialmente planejamos os níveis do fator "Números de Requisições" como 100/s e 1000/s. No entanto, percebemos que o serviço não conseguiu responder à todas elas, pois não estava preparado para essa quantidade de requisições. Então, para que fosse possível obter os resultados esperados e analisá-los, testamos a resposta do sistema para outros níveis do fator mencionado e estabelecemos que as quantidades adequadas ao nosso experimento seriam de 10/min e 40/min. 
 
 -----------
 
 ###Resultados
+
+####Resultados gerais
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 output <- read.csv("output.csv",  encoding="UTF-8")
@@ -174,7 +176,7 @@ data <- output %>%
   )
 ```
 
-Inicialmente é verificado o tempo de resposta, sem levar em consideração os fatores, e o quanto ele varia:
+Abaixo é mostrado o tempo de resposta do sistemas às requisições, sem levar em consideração a variação dos fatores e seus níveis.
 
 ```{r}
 ggplot(data, aes("Time difference", time_diff)) +
@@ -185,11 +187,9 @@ summary(data$time_diff)
 sd(data$time_diff)
 ```
 
-Como é possível ver acima, o tempo de resposta varia bastante, onde sua média é de 23,2 segundos, mediana de 20,1 segundos e desvio padrão de 13,3 segundos. Os valores do primeiro e terceiro quartil são de 10,5 e 38,7 segundos, os quais se aproxímam bastante do número de requisições por minuto utilizados na medição (10 e 40).
+Como é possível ver acima, o tempo de resposta varia bastante. Tendo como média 23,2 segundos, mediana 20,1 segundos e desvio padrão de 13,3 segundos. Os valores do primeiro e terceiro quartil são de 10,5 e 38,7 segundos, os quais se aproxímam bastante do número de requisições por minuto utilizados na medição (10 e 40).
 
---------------
-
-A seguir é possível ver a distribuição destes dados:
+A seguir é possível ver a distribuição destes dados em um Histograma:
 
 ```{r}
 ggplot(data, aes(time_diff)) +
@@ -198,11 +198,13 @@ ggplot(data, aes(time_diff)) +
   ggtitle("Histograma de distribuição dos dados")
 ```
 
-É possível ver que a distribuição é multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.
+Podemos observar que a distribuição é multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.Para verificar essa hipótese, analisamos os resultados a seguir.
 
 -----------
 
-Abaixo vamos verificar como cada conjunto de fatores se comporta, onde cada um será representado por cada número:
+####Resultados com variação de fatores
+
+Abaixo listamos cada conjunto de fatores analisado. A numeração é utilizada para representar cada grupo de fatores no gráfico seguinte, onde analisamos o tempo de resposta, o comportamento geral, e se existe relação entre os fatores escolhidos.
 
 ```{r}
 data <- data %>% 
@@ -222,11 +224,9 @@ data <- data %>%
 
 ```{r}
 data.group = data %>% select(n_instances, n_iterations, hours, group) %>% distinct() %>% arrange(group)
-colnames(data.group) <- c("Nº de Instâncias", "Nº de Requisições / min", "Horário", "Grupo")
+colnames(data.group) <- c("Nº de Instâncias", "Nº de Requisições/min", "Horário", "Grupo")
 data.group
 ```
-
-A seguir, vamos verificar como é o comportamento de cada conjunto de fatores que foram definidos acima, e se existe relação entre os fatores escolhidos e o tempo de resposta:
 
 -------------------
 
@@ -243,7 +243,6 @@ tapply(data$time_diff,data$group,sd)
 
 ```
 
-
 É possível verificar que a hora não influencia no tempo de resposta, visto que os grupos 1 e 2 tem horas diferentes, mas variam os demais fatores, o que também ocorre com os grupos 3 e 4, 5 e 6, 7 e 8. 
 
 É possível ver que o número de requisições por minuto é um fator que causa bastante impacto no tempo de resposta, visto que conservando os demais fatores e variando o número de requisições, o tempo de resposta diferencia bastante, como podemos ver nos grupos 1 e 3, 2 e 4, 5 e 7, 6 e 8. 
@@ -252,7 +251,9 @@ tapply(data$time_diff,data$group,sd)
 
 -----
 
-Vamos verificar como é a distribuição do tempo de resposta, avaliando o número de instâncias, número de requisições e o horário do experimento.
+####Resultados e análises adicionais
+
+Como análise adicional, vamos verificar como é a distribuição do tempo de resposta, avaliando o número de instâncias, número de requisições e o horário do experimento.
 
 ```{r}
 distribuicao.num.instancias = ggplot(data, aes(x=factor(n_iterations), y=time_diff,fill=factor(hours))) +
@@ -280,8 +281,9 @@ grid.draw(label.geral.top.e.right(distribuicao.geral))
 
 ```
 
--- Mostrar o intervalo de confiança do tempo de resposta para cada grupo
+Como já observado anteriormente, o sistema apresenta um tempo de resposta médio bem menor quando a quantidade de requisições por minuto é de 10. E, especialmente para 40 requisições/minuto, o uso de 2 instâncias diminue consideravelmente o tempo de resposta.
 
+####Intervalo de confiança para o tempo de resposta
 
 ```{r}
 experiment = sample_n(data, 500, replace = TRUE)
@@ -308,6 +310,7 @@ df %>% ggplot(aes(x = medida, ymin = X2.5., ymax = X97.5.)) +
 
 ```
 
+####Tempo de resposta considerando a sequência de requisições
 
 Agora iremos analisar o tempo de resposta das requisição levando em conta a "posição" da requisição (a primeira requisição, segunda, terceira..) 
 
@@ -323,13 +326,8 @@ ggplot(data.first.iterations,aes(x=curr_iteration, y=time_diff)) +
 
 ```
 
-
--- Mais anÃ¡lises que queiram
-
 --------
 
 ###Considerações Finais 
-
-#Precisa colocar essa parte?
 
 
