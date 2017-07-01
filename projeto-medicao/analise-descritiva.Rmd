@@ -27,10 +27,10 @@ theme_set(theme_bw())
   Para isso, nossa avaliação terá como principal atividade o aumento da quantidade de requisições a que o sistema é submetido e iremos analisar como se comporta o tempo de respostas às requisições diante desse aumento.  
   Além da quantidade de requisições, iremos avaliar o impacto da variação da mudança no horário no qual as requisições serão feitas (10hrs e 22hrs, aproximadamente) e se o número de instâncias rodando o serviço pode influenciar na escalabilidade do sistema. 
 
-###Especificação de Ambiente  
+###Especificação de Ambiente
 	Para realizar as medições, vamos utilizar uma máquina de 64 bits, com processador Intel® CoreT i5-3570 CPU @ 3.40GHz × 4, memória de 12GB, rodando em cima do sistema operacional Ubuntu 16.04. A rede que será utilizada na medição tem velocidade declarada de 10 Gbps.
 
-###Definição de Métricas  
+###Definição de Métricas
 	Para realizarmos nossa avaliação, vamos utilizar as seguintes variáveis de resposta (métricas) :
 * Tempo de Resposta de Requisição:  
   Para isso vamos usar um medidor de timestamp e calcular o tempo discorrido entre o envio das requisições e o recebimento das respostas enviadas pelo servidor. Para eliminar fatores secundários que possam influenciar na nossa análise, iremos realizar X repetições para cada bloco de variáveis e as requisições realizadas serão sempre do tipo GET. 
@@ -40,7 +40,8 @@ theme_set(theme_bw())
 ###Definição de Fatores e Níveis
 
 	As métricas tempo de resposta de requisição e tempo de resposta da rede serão utilizados para avaliar a escalabilidade do sistema, quando existe variação no número de instâncias rodando, número de requisições e horário das requisições.  
-  Os níveis de cada fator serão definidos de acordo com os seguintes valores:  
+  Os níveis de cada fator serão definidos de acordo com os seguintes valores:
+  
 * Número de Instâncias:  
   1 instância  
   2 instâncias
@@ -66,10 +67,12 @@ theme_set(theme_bw())
 
 ###Experimentos
 
-	As requisições realizadas, foram geradas __bold__ (EXPLICAR O SCRIPT) __bold__ .
-Durante a primeira execução do experimento, os níveis do fator "Números de Requisições" foram 100/s e 1000/s mas pudemos perceber que devido a quantidade de requisições sendo realizadas, o serviço não conseguiu responder à todas elas __bold__(EXPLICAR MELHOR?) __bold__, para que fosse possível obter resultados e analisá-los, foram avaliados alguns níveis, até obtermos os valores de 10/min e 40/min. 
+	As requisições realizadas, foram geradas ##(EXPLICAR O SCRIPT)## .
+Durante a primeira execução do experimento, os níveis do fator "Números de Requisições" foram 100/s e 1000/s mas pudemos perceber que devido a quantidade de requisições sendo realizadas, o serviço não conseguiu responder à todas elas ##(EXPLICAR MELHOR?)##, para que fosse possível obter resultados e analisá-los, foram avaliados alguns níveis, até obtermos os valores de 10/min e 40/min. 
 
 -----------
+
+###Resultados
 
 ```{r, message=FALSE, warning=FALSE, echo=FALSE}
 output <- read.csv("output.csv",  encoding="UTF-8")
@@ -215,4 +218,11 @@ ggplot(data.first.iterations,aes(x=curr_iteration, y=time_diff)) +
 
 
 -- Mais anÃ¡lises que queiram
+
+--------
+
+###Considerações Finais 
+
+#Precisa colocar essa parte?
+
 
