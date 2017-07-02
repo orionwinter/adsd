@@ -22,7 +22,7 @@ theme_set(theme_bw())
 
 ```{r}
 
-label.geral.top <- function(distribuicao) {
+label.geral.top <- function(distribuicao, nome.label) {
   
   ## Para adicionar o label geral
   distribuicao.grob = ggplotGrob(distribuicao)
@@ -33,7 +33,7 @@ label.geral.top <- function(distribuicao) {
                         # New strip spans columns 4 to 8
   distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
-       textGrob("Número de Instâncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
+       textGrob(nome.label)), t=6, l=4, b=6, r=8, name = c("a", "b"))
 
   # Add small gap between strips - below row 6
   distribuicao.grob <- gtable_add_rows(distribuicao.grob, unit(2/10, "line"), 6)
@@ -44,7 +44,7 @@ label.geral.top <- function(distribuicao) {
   return(distribuicao.grob)
 }
 
-label.geral.top.e.right <- function(distribuicao) {
+label.geral.top.e.right <- function(distribuicao, nome.label.top, nome.label.right) {
   
     ## Para adicionar o label geral
   distribuicao.grob = ggplotGrob(distribuicao)
@@ -57,7 +57,7 @@ label.geral.top.e.right <- function(distribuicao) {
                         # New strip spans columns 4 to 8
   distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
-       textGrob("Número de Instâncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
+       textGrob(nome.label.top)), t=6, l=4, b=6, r=8, name = c("a", "b"))
   
   distribuicao.grob<- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
@@ -198,7 +198,35 @@ ggplot(data, aes(time_diff)) +
   ggtitle("Histograma de distribuição dos dados")
 ```
 
-Podemos observar que a distribuição é multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.Para verificar essa hipótese, analisamos os resultados a seguir.
+Podemos observar que a distribuição é multimodal, o que pode indicar que os fatores influenciam no tempo de resposta. Para uma maior representação, decidimos utilizar o intervalo de confiança para a média e a mediana.
+
+
+
+```{r}
+experiment = sample_n(data, 1000, replace = TRUE)
+
+b = experiment %>%
+  bootstrap(mean(time_diff), R = 1000)
+
+mean.boot= bootstrap(experiment, mean(time_diff), R = 1000)
+mean.time = CI.bca(mean.boot, probs = c(.025, .975))
+mean.time
+
+median.boot = bootstrap(experiment, median(time_diff))
+median.time = CI.percentile(median.boot, probs = c(.025, .975))
+median.time 
+
+df = data.frame(rbind(mean.time, 
+                      median.time))
+
+df$medida = row.names(df)
+row.names(df)
+
+df %>% ggplot(aes(x = medida, ymin = X2.5., ymax = X97.5.)) + 
+  geom_errorbar(width = .2) + 
+  ggtitle("Intervalo de confiança da estimativa das médias e medianas do tempo de requisição dos experimentos")
+
+```
 
 -----------
 
@@ -234,10 +262,20 @@ data.group
 ggplot(data, aes(as.factor(group), time_diff)) +
   geom_boxplot() +
   labs(x="Grupos", y="Tempo de Resposta")+
-  ggtitle("Gráfico de relação entre fatores e tempo de resposta")	
+  ggtitle("Gráfico de relação entre fatores e tempo de resposta")	 +
+  scale_color_manual(labels = c("1 - ", "T888"), values = c("blue", "red")) +
+  theme_bw() +
+  guides(color=guide_legend("my title"))  # add guide properties by aesthetic
+
 
 #Summary de cada grupo
 tapply(data$time_diff,data$group,summary)
+
+```
+
+Desvio padrão para cada grupo:
+
+```{r}
 tapply(data$time_diff,data$group,sd)
 
 
@@ -262,7 +300,7 @@ distribuicao.num.instancias = ggplot(data, aes(x=factor(n_iterations), y=time_di
   labs(y="Tempo de Resposta", fill="Horário do Experimento", x= "Número de requisições por minuto")
 
 ## Para adicionar o label geral
-grid.draw(label.geral.top(distribuicao.num.instancias))
+grid.draw(label.geral.top(distribuicao.num.instancias, "Número de Instâncias"))
 
 
 ```
@@ -276,43 +314,167 @@ distribuicao.geral = ggplot(data, aes(time_diff, fill=factor(hours))) +
 ## Para adicionar o label geral
 #label.top = label.geral.top(distribuicao.geral)
 
-grid.draw(label.geral.top.e.right(distribuicao.geral))
+grid.draw(label.geral.top.e.right(distribuicao.geral,"Número de Instâncias","Nº de Requisições / min"))
 
 
 ```
 
 Como já observado anteriormente, o sistema apresenta um tempo de resposta médio bem menor quando a quantidade de requisições por minuto é de 10. E, especialmente para 40 requisições/minuto, o uso de 2 instâncias diminue consideravelmente o tempo de resposta.
 
+-------------
+
 ####Intervalo de confiança para o tempo de resposta
 
+#ESCOLHER ENTRE 1 E 2 
+
+#(1)
+
 ```{r}
-experiment = sample_n(data, 500, replace = TRUE)
 
-b = experiment %>%
-  group_by(group) %>%
-  bootstrap(mean(time_diff), R = 500)
+grupo.experimento.all = function(grupo){
+  data.group = data %>% filter(group==grupo)
+  
+  experiment = sample_n(data.group, 500, replace = TRUE)
 
-mean.boot= bootstrap(experiment, mean(time_diff), R = 500)
-mean.time = CI.bca(mean.boot, probs = c(.025, .975))
-mean.time
+  b = experiment %>% bootstrap(mean(time_diff), R = 500)
 
-median.boot = bootstrap(experiment, median(time_diff))
-median.time = CI.percentile(median.boot, probs = c(.025, .975))
-median.time 
+  #Media
+  mean.boot= bootstrap(experiment, mean(time_diff), R = 500)
+  mean.time = CI.bca(mean.boot, c(.025, .975))
 
-df = data.frame(rbind(mean.time, 
-                      median.time))
+  #Mediana
+  median.boot = bootstrap(experiment, median(time_diff))
+  median.time = CI.percentile(median.boot, probs = c(.025, .975))
 
-df$medida = row.names(df)
+  df <- data.frame(matrix(NA, nrow = 1, ncol = 5))
+  colnames(df) <- c("grupo","limite.inferior.media","limite.superior.media","limite.inferior.mediana","limite.superior.mediana")
 
-df %>% ggplot(aes(x = medida, ymin = X2.5., ymax = X97.5.)) + 
-  geom_errorbar(width = .2)
+  df[1,1] <- grupo
+  df[1,2] <- mean.time[1,1]
+  df[1,3] <- mean.time[1,2]
+  df[1,4] <- median.time[1,1]
+  df[1,5] <- median.time[1,2]
+  
+  
+
+  return(df)
+}
+
+
+#Grupo 1
+grupo.1.all = grupo.experimento.all(1)
+grupo.2.all = grupo.experimento.all(2)
+grupo.3.all = grupo.experimento.all(3)
+grupo.4.all = grupo.experimento.all(4)
+grupo.5.all = grupo.experimento.all(5)
+grupo.6.all = grupo.experimento.all(6)
+grupo.7.all = grupo.experimento.all(7)
+grupo.8.all = grupo.experimento.all(8)
+
+
+medidas.por.grupo.geral = data.frame(
+  rbind(grupo.1.all,
+        grupo.2.all,
+        grupo.3.all,
+        grupo.4.all,
+        grupo.5.all,
+        grupo.6.all,
+        grupo.7.all,
+        grupo.8.all))
+
+
+medidas.por.grupo.geral %>% 
+  ggplot(aes(x = grupo, ymin = limite.inferior.media, ymax = limite.superior.media)) + 
+  geom_errorbar(width = .2) +
+    ggtitle("Intervalo de confiança da estimativa das médias do tempo de resposta \ncategorizados por grupo de experimento") +
+  labs(x= "Grupos", "Tempo de resposta")
+
+
+medidas.por.grupo.geral %>% 
+  ggplot(aes(x = grupo, ymin = limite.inferior.mediana, ymax = limite.superior.mediana)) + 
+  geom_errorbar(width = .2) +
+  ggtitle("Intervalo de confiança da estimativa das medianas do tempo de resposta \ncategorizados por grupo de experimento") +
+  labs(x= "Grupos", "Tempo de resposta")
+
 
 ```
 
+
+--------------------
+
+#(2)
+
+```{r}
+grupo.experimento = function(grupo){
+  
+  data.group = data %>% filter(group==grupo)
+  
+  experiment = sample_n(data.group, 500, replace = TRUE)
+
+  b = experiment %>% bootstrap(mean(time_diff), R = 500)
+
+  #Media
+  mean.boot= bootstrap(experiment, mean(time_diff), R = 500)
+  mean.time = CI.bca(mean.boot, c(.025, .975))
+
+  #Mediana
+  median.boot = bootstrap(experiment, median(time_diff))
+  median.time = CI.percentile(median.boot, probs = c(.025, .975))
+
+  #df <- data.frame(matrix(NA, nrow = 1, ncol = 5))
+  #colnames(df) <- c("grupo","limite.inferior.media","limite.superior.media","limite.inferior.mediana","limite.superior.mediana")
+
+  df = data.frame(rbind(mean.time, median.time))
+
+  df$medida = c("media", "mediana")
+  df$grupo <- c(grupo, grupo)
+  
+  colnames(df) <- c("limite.inferior","limite.superior","medida","grupo")
+
+  return(df)
+}
+
+#Grupo 1
+grupo.1 = grupo.experimento(1)
+grupo.2 = grupo.experimento(2)
+grupo.3 = grupo.experimento(3)
+grupo.4 = grupo.experimento(4)
+grupo.5 = grupo.experimento(5)
+grupo.6 = grupo.experimento(6)
+grupo.7 = grupo.experimento(7)
+grupo.8 = grupo.experimento(8)
+
+
+
+ic = data.frame(
+  rbind(grupo.1,
+        grupo.2,
+        grupo.3,
+        grupo.4,
+        grupo.5,
+        grupo.6,
+        grupo.7,
+        grupo.8))
+
+
+## Para adicionar o label geral
+
+ic %>% 
+  ggplot(aes(x = medida, ymin = limite.inferior, ymax = limite.superior)) + 
+  geom_errorbar(width = .2) +
+  facet_grid(~grupo)+
+    ggtitle("Intervalo de confiança da estimativa das médias e medianas do tempo de\nresposta categorizados por grupo de experimento")+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+```
+
+
+-----
+
 ####Tempo de resposta considerando a sequência de requisições
 
-Agora iremos analisar o tempo de resposta das requisição levando em conta a "posição" da requisição (a primeira requisição, segunda, terceira..) 
+Agora iremos analisar o tempo de resposta das requisição levando em conta o índice da requisição (a primeira requisição, segunda, terceira..) 
 
 ```{r}
 # Mostrar que primeiras requisiÃ§Ãµes sÃ£o mais rÃ¡pidas que as demais (que dÃ¡ para pegar pelo curr_iteration)
@@ -320,9 +482,13 @@ Agora iremos analisar o tempo de resposta das requisição levando em conta a "pos
 data.first.iterations <- data %>%
   group_by(curr_iteration)
 
-ggplot(data.first.iterations,aes(x=curr_iteration, y=time_diff)) +
+sequencia.instancia = ggplot(data.first.iterations,aes(x=curr_iteration, y=time_diff)) +
   geom_bar(stat = "identity")+
-  facet_grid(~n_instances)
+  facet_grid(~n_instances)+
+  ggtitle("Tempo de resposta para Número de Instâncias")+
+  labs(y = "Tempo de resposta (ms)", x = "Índice da requisição")
+
+grid.draw(label.geral.top(sequencia.instancia,"Número de Instâncias"))
 
 ```
 
