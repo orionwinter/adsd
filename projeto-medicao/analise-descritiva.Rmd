@@ -1,6 +1,6 @@
 ---
-title: "Projeto de MediÁ„o"
-author: "Aline Costa - Rafaelle Amorim - ”rion Darshan Winter"
+title: "Projeto de Medi√ß√£o"
+author: "Aline Costa - Rafaelle Amorim - √ìrion Winter de Lima"
 output: html_document
 ---
 
@@ -33,7 +33,7 @@ label.geral.top <- function(distribuicao) {
                         # New strip spans columns 4 to 8
   distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
-       textGrob("N˙mero de Inst‚ncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
+       textGrob("N√∫mero de Inst√¢ncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
 
   # Add small gap between strips - below row 6
   distribuicao.grob <- gtable_add_rows(distribuicao.grob, unit(2/10, "line"), 6)
@@ -57,11 +57,11 @@ label.geral.top.e.right <- function(distribuicao) {
                         # New strip spans columns 4 to 8
   distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
-       textGrob("N˙mero de Inst‚ncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
+       textGrob("N√∫mero de Inst√¢ncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
   
   distribuicao.grob<- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
-       textGrob("N∫ de RequisiÁıes / min", rot = -90)), 
+       textGrob("N¬∫ de Requisi√ß√µes / min", rot = -90)), 
     t=5, l=8, b=10, r=9, name = c("a", "b"))
 
   # Add small gap between strips - below row 6
@@ -99,44 +99,42 @@ label.geral.right <- function(distribuicao, nome){
 ```
 
 
-###DescriÁ„o do sistema  
-  O sistema que decidimos avaliar È um serviÁo de prediÁ„o utilizado pelo aplicativo Melhor Bus„o, aplicativo criado com o intuito de melhorar a experiÍncia dos usu·rios de transporte p˙blico, inicialmente da cidade de Campina Grande - PB e Curitiba - PR.  
-  O serviÁo ter como funÁ„o principal prever a quantidade de passageiros e a duraÁ„o de uma viagem de Ùnibus de um dado usu·rio.    Para realizar tal funÁ„o, o serviÁo pede os dados da rota do Ùnibus, parada de inÌcio, data e hora da viagem e, atravÈs de tÈcnicas de aprendizado de m·quina, prevÍ a quantidade de passageiros e a duraÁ„o da viagem passada.  
-  Este serviÁo est· hospedado em um m·quina virtual no LaboratÛrio de Sistemas DistribuÌdos (LSD), localizado na Universidade Federal de Campina Grande (UFCG).
+###Descri√ß√£o do sistema  
+  O sistema que decidimos avaliar √© um servi√ßo de predi√ß√£o utilizado pelo aplicativo Melhor Bus√£o, aplicativo criado com o intuito de melhorar a experi√™ncia dos usu√°rios de transporte p√∫blico, inicialmente da cidade de Campina Grande - PB e Curitiba - PR.  
+  O servi√ßo ter como fun√ß√£o principal prever a quantidade de passageiros e a dura√ß√£o de uma viagem de √¥nibus de um dado usu√°rio.    Para realizar tal fun√ß√£o, o servi√ßo pede os dados da rota do √¥nibus, parada de in√≠cio, data e hora da viagem e, atrav√©s de t√©cnicas de aprendizado de m√°quina, prev√™ a quantidade de passageiros e a dura√ß√£o da viagem passada.  
+  Este servi√ßo est√° hospedado em um m√°quina virtual no Laborat√≥rio de Sistemas Distribu√≠dos (LSD), localizado na Universidade Federal de Campina Grande (UFCG).
   
 ###Objetivo  
-  Decidimos avaliar o sistema quanto ao critÈrio de Escalabilidade, pois È um aspecto de extrema import‚ncia no desenvolvimento de sistemas em geral. Em especial para a nossa aplicaÁ„o, que dever· ser implantada em breve e espera-se que ela consiga trabalhar normalmente mesmo com uma demanda crescente de usu·rios.  
-  Para isso, nossa avaliaÁ„o ter· como principal atividade o aumento da quantidade de requisiÁıes a que o sistema È submetido e iremos analisar como se comporta o tempo de respostas ‡s requisiÁıes diante desse aumento.  
-  AlÈm da quantidade de requisiÁıes, iremos avaliar o impacto da variaÁ„o da mudanÁa no hor·rio no qual as requisiÁıes ser„o feitas (10hrs e 22hrs, aproximadamente) e se o n˙mero de inst‚ncias rodando o serviÁo pode influenciar na escalabilidade do sistema. 
+  Decidimos avaliar o sistema quanto ao crit√©rio de Escalabilidade, pois √© um aspecto de extrema import√¢ncia no desenvolvimento de sistemas em geral. Em especial para a nossa aplica√ß√£o, que dever√° ser implantada em breve e espera-se que ela consiga trabalhar normalmente mesmo com uma demanda crescente de usu√°rios.  
+  Para isso, nossa avalia√ß√£o ter√° como principal atividade o aumento da quantidade de requisi√ß√µes a que o sistema √© submetido e iremos analisar como se comporta o tempo de respostas √†s requisi√ß√µes diante desse aumento.  
+  Al√©m da quantidade de requisi√ß√µes, iremos avaliar o impacto da varia√ß√£o da mudan√ßa no hor√°rio no qual as requisi√ß√µes ser√£o feitas (10hrs e 22hrs, aproximadamente) e se o n√∫mero de inst√¢ncias rodando o servi√ßo pode influenciar na escalabilidade do sistema. 
 
-###EspecificaÁ„o de Ambiente
-	Para realizar as mediÁıes, vamos utilizar uma m·quina de 64 bits, com processador IntelÆ CoreT i5-3570 CPU @ 3.40GHz ◊ 4, memÛria de 12GB, rodando em cima do sistema operacional Ubuntu 16.04. A rede que ser· utilizada na mediÁ„o tem velocidade declarada de 10 Gbps.
+###Especifica√ß√£o de Ambiente
+	Para realizar as medi√ß√µes, vamos utilizar uma m√°quina de 64 bits, com processador Intel¬Æ CoreT i5-3570 CPU @ 3.40GHz √ó 4, mem√≥ria de 12GB, rodando em cima do sistema operacional Ubuntu 16.04. A rede que ser√° utilizada na medi√ß√£o tem velocidade declarada de 10 Gbps.
 
-###DefiniÁ„o de MÈtricas
-	Para realizarmos nossa avaliaÁ„o, vamos utilizar as seguintes vari·veis de resposta (mÈtricas) :
-* Tempo de Resposta de RequisiÁ„o:  
-  Para isso vamos usar um medidor de timestamp e calcular o tempo discorrido entre o envio das requisiÁıes e o recebimento das respostas enviadas pelo servidor. Para eliminar fatores secund·rios que possam influenciar na nossa an·lise, iremos realizar X repetiÁıes para cada bloco de vari·veis e as requisiÁıes realizadas ser„o sempre do tipo GET. 
-* Tempo de Resposta da Rede:  
-  A mediÁ„o ser· realizada de forma ativa, j· que as requisiÁıes ser„o injetadas no sistema para a verificaÁ„o do seu comportamento quando ocorrer variaÁ„o desse n˙mero.
+###Defini√ß√£o de M√©tricas
+	Para realizarmos nossa avalia√ß√£o, vamos utilizar as seguintes vari√°veis de resposta (m√©tricas) :
+* Tempo de Resposta de Requisi√ß√£o:  
+  Para isso vamos usar um medidor de timestamp e calcular o tempo discorrido entre o envio das requisi√ß√µes e o recebimento das respostas enviadas pelo servidor. Para eliminar fatores secund√°rios que possam influenciar na nossa an√°lise, iremos realizar X repeti√ß√µes para cada bloco de vari√°veis e as requisi√ß√µes realizadas ser√£o sempre do tipo GET. 
 
-###DefiniÁ„o de Fatores e NÌveis
+###Defini√ß√£o de Fatores e N√≠veis
 
-	As mÈtricas tempo de resposta de requisiÁ„o e tempo de resposta da rede ser„o utilizados para avaliar a escalabilidade do sistema, quando existe variaÁ„o no n˙mero de inst‚ncias rodando, n˙mero de requisiÁıes e hor·rio das requisiÁıes.  
-  Os nÌveis de cada fator ser„o definidos de acordo com os seguintes valores:
+	As m√©tricas tempo de resposta de requisi√ß√£o e tempo de resposta da rede ser√£o utilizados para avaliar a escalabilidade do sistema, quando existe varia√ß√£o no n√∫mero de inst√¢ncias rodando, n√∫mero de requisi√ß√µes e hor√°rio das requisi√ß√µes.  
+  Os n√≠veis de cada fator ser√£o definidos de acordo com os seguintes valores:
   
-1. N˙mero de Inst‚ncias: 
-   * 1 inst‚ncia  
-   * 2 inst‚ncias
-2. N˙meros de RequisiÁıes:  
+1. N√∫mero de Inst√¢ncias: 
+   * 1 inst√¢ncia  
+   * 2 inst√¢ncias
+2. N√∫meros de Requisi√ß√µes:  
    * 10/min  
    * 40/min
-3. Hor·rio das RequisiÁıes:  
+3. Hor√°rio das Requisi√ß√µes:  
    * 10h - 11h  
    * 22h - 23h
   
-  A combinaÁ„o dos fatores e seus nÌveis ser· executada como mostra a tabela abaixo. Realizaremos 3 mediÁıes de cada tipo nos hor·rios mencionados durante 3 dias alternados. 
+  A combina√ß√£o dos fatores e seus n√≠veis ser√° executada como mostra a tabela abaixo. Realizaremos 3 medi√ß√µes de cada tipo nos hor√°rios mencionados durante 3 dias alternados. 
   
-  MediÁ„o | Inst‚ncias | RequisiÁıes/min | Hor·rio
+  Medi√ß√£o | Inst√¢ncias | Requisi√ß√µes/min | Hor√°rio
   --------|------------|-----------------|--------
      1    |     1      |        10       |  10h~11h
      2    |     1      |        10       |  22h~23h
@@ -149,8 +147,9 @@ label.geral.right <- function(distribuicao, nome){
 
 ###Experimentos
 
-	As requisiÁıes realizadas, foram geradas ##(EXPLICAR O SCRIPT)## .
-Inicialmente planejamos os nÌveis do fator "N˙meros de RequisiÁıes" como 100/s e 1000/s. No entanto, percebemos que o serviÁo n„o conseguiu responder ‡ todas elas, pois n„o estava preparado para essa quantidade de requisiÁıes. Ent„o, para que fosse possÌvel obter os resultados esperados e analis·-los, testamos a resposta do sistema para outros nÌveis do fator mencionado e estabelecemos que as quantidades adequadas ao nosso experimento seriam de 10/min e 40/min. 
+	As medi√ß√µes foram feitas a partir de um script nodeJS, o qual realizava a quantidade de requiisi√ß√µes especificadas (10/min e 40/min). Esse script rodou programaticamente atrav√©s do crontab, um programa nativo do Unix que executa comandos de forma agendada.
+Inicialmente planejamos os n√≠veis do fator "N√∫meros de Requisi√ß√µes" como 100/s e 1000/s. No entanto, percebemos que o servi√ßo n√£o conseguiu responder √† todas elas, pois n√£o estava preparado para essa quantidade de requisi√ß√µes. Ent√£o, para que fosse poss√≠vel obter os resultados esperados e analis√°-los, testamos a resposta do sistema para outros n√≠veis do fator mencionado e estabelecemos que as quantidades adequadas ao nosso experimento seriam de 10/min e 40/min. 
+A quantidade de inst√¢ncias foi modificada manualmente no sistema, de forma que nas primeiras 4 execu√ß√µes existisse 1 inst√¢ncia dispon√≠vel e nas 4 seguintes existissem 2 inst√¢ncias.
 
 -----------
 
@@ -176,7 +175,7 @@ data <- output %>%
   )
 ```
 
-Abaixo È mostrado o tempo de resposta do sistemas ‡s requisiÁıes, sem levar em consideraÁ„o a variaÁ„o dos fatores e seus nÌveis.
+Abaixo √© mostrado o tempo de resposta do sistemas √†s requisi√ß√µes, sem levar em considera√ß√£o a varia√ß√£o dos fatores e seus n√≠veis.
 
 ```{r}
 ggplot(data, aes("Time difference", time_diff)) +
@@ -187,24 +186,24 @@ summary(data$time_diff)
 sd(data$time_diff)
 ```
 
-Como È possÌvel ver acima, o tempo de resposta varia bastante. Tendo como mÈdia 23,2 segundos, mediana 20,1 segundos e desvio padr„o de 13,3 segundos. Os valores do primeiro e terceiro quartil s„o de 10,5 e 38,7 segundos, os quais se aproxÌmam bastante do n˙mero de requisiÁıes por minuto utilizados na mediÁ„o (10 e 40).
+Como √© poss√≠vel ver acima, o tempo de resposta varia bastante. Tendo como m√©dia 23,2 segundos, mediana 20,1 segundos e desvio padr√£o de 13,3 segundos. Os valores do primeiro e terceiro quartil s√£o de 10,5 e 38,7 segundos, os quais se aprox√≠mam bastante do n√∫mero de requisi√ß√µes por minuto utilizados na medi√ß√£o (10 e 40).
 
-A seguir È possÌvel ver a distribuiÁ„o destes dados em um Histograma:
+A seguir √© poss√≠vel ver a distribui√ß√£o destes dados em um Histograma:
 
 ```{r}
 ggplot(data, aes(time_diff)) +
   geom_histogram(bins = 15) +
   labs(x = "Tempo de resposta") +
-  ggtitle("Histograma de distribuiÁ„o dos dados")
+  ggtitle("Histograma de distribui√ß√£o dos dados")
 ```
 
-Podemos observar que a distribuiÁ„o È multimodal, o que pode indicar que os fatores influenciam no tempo de resposta.Para verificar essa hipÛtese, analisamos os resultados a seguir.
+Podemos observar que a distribui√ß√£o √© multimodal, o que pode indicar que os fatores influenciam no tempo de resposta. Para verificar essa hip√≥tese, analisamos os resultados a seguir.
 
 -----------
 
-####Resultados com variaÁ„o de fatores
+####Resultados com varia√ß√£o de fatores
 
-Abaixo listamos cada conjunto de fatores analisado. A numeraÁ„o È utilizada para representar cada grupo de fatores no gr·fico seguinte, onde analisamos o tempo de resposta, o comportamento geral, e se existe relaÁ„o entre os fatores escolhidos.
+Abaixo listamos cada conjunto de fatores analisado. A numera√ß√£o √© utilizada para representar cada grupo de fatores no gr√°fico seguinte, onde analisamos o tempo de resposta, o comportamento geral, e se existe rela√ß√£o entre os fatores escolhidos.
 
 ```{r}
 data <- data %>% 
@@ -224,7 +223,7 @@ data <- data %>%
 
 ```{r}
 data.group = data %>% select(n_instances, n_iterations, hours, group) %>% distinct() %>% arrange(group)
-colnames(data.group) <- c("N∫ de Inst‚ncias", "N∫ de RequisiÁıes/min", "Hor·rio", "Grupo")
+colnames(data.group) <- c("N¬∫ de Inst√¢ncias", "N¬∫ de Requisi√ß√µes/min", "Hor√°rio", "Grupo")
 data.group
 ```
 
@@ -234,7 +233,7 @@ data.group
 ggplot(data, aes(as.factor(group), time_diff)) +
   geom_boxplot() +
   labs(x="Grupos", y="Tempo de Resposta")+
-  ggtitle("Gr·fico de relaÁ„o entre fatores e tempo de resposta")	
+  ggtitle("Gr√°fico de rela√ß√£o entre fatores e tempo de resposta")	
 
 #Summary de cada grupo
 tapply(data$time_diff,data$group,summary)
@@ -243,23 +242,23 @@ tapply(data$time_diff,data$group,sd)
 
 ```
 
-… possÌvel verificar que a hora n„o influencia no tempo de resposta, visto que os grupos 1 e 2 tem horas diferentes, mas variam os demais fatores, o que tambÈm ocorre com os grupos 3 e 4, 5 e 6, 7 e 8. 
+√â poss√≠vel verificar que a hora n√£o influencia no tempo de resposta, visto que os grupos 1 e 2 tem horas diferentes, mas variam os demais fatores, o que tamb√©m ocorre com os grupos 3 e 4, 5 e 6, 7 e 8. 
 
-… possÌvel ver que o n˙mero de requisiÁıes por minuto È um fator que causa bastante impacto no tempo de resposta, visto que conservando os demais fatores e variando o n˙mero de requisiÁıes, o tempo de resposta diferencia bastante, como podemos ver nos grupos 1 e 3, 2 e 4, 5 e 7, 6 e 8. 
+√â poss√≠vel ver que o n√∫mero de requisi√ß√µes por minuto √© um fator que causa bastante impacto no tempo de resposta, visto que conservando os demais fatores e variando o n√∫mero de requisi√ß√µes, o tempo de resposta diferencia bastante, como podemos ver nos grupos 1 e 3, 2 e 4, 5 e 7, 6 e 8. 
 
-… possÌvel identificar tambÈm que o n˙mero de inst‚ncias utilizadas na mediÁ„o influencia bastante o tempo de resposta, visto que fixando os demais fatores e mudando apenas o n˙mero de inst‚ncias, o tempo de resposta varia bastante, como pode ser verificado nos grupos 1 e 5, 2 e 6, 3 e 7, 4 e 8.
+√â poss√≠vel identificar tamb√©m que o n√∫mero de inst√¢ncias utilizadas na medi√ß√£o influencia bastante o tempo de resposta, visto que fixando os demais fatores e mudando apenas o n√∫mero de inst√¢ncias, o tempo de resposta varia bastante, como pode ser verificado nos grupos 1 e 5, 2 e 6, 3 e 7, 4 e 8.
 
 -----
 
-####Resultados e an·lises adicionais
+####Resultados e an√°lises adicionais
 
-Como an·lise adicional, vamos verificar como È a distribuiÁ„o do tempo de resposta, avaliando o n˙mero de inst‚ncias, n˙mero de requisiÁıes e o hor·rio do experimento.
+Como an√°lise adicional, vamos verificar como √© a distribui√ß√£o do tempo de resposta, avaliando o n√∫mero de inst√¢ncias, n√∫mero de requisi√ß√µes e o hor√°rio do experimento.
 
 ```{r}
 distribuicao.num.instancias = ggplot(data, aes(x=factor(n_iterations), y=time_diff,fill=factor(hours))) +
   geom_bar(stat = "identity", position = "dodge") +
   facet_grid(~n_instances) +
-  labs(y="Tempo de Resposta", fill="Hor·rio do Experimento", x= "N˙mero de requisiÁıes por minuto")
+  labs(y="Tempo de Resposta", fill="Hor√°rio do Experimento", x= "N√∫mero de requisi√ß√µes por minuto")
 
 ## Para adicionar o label geral
 grid.draw(label.geral.top(distribuicao.num.instancias))
@@ -271,7 +270,7 @@ grid.draw(label.geral.top(distribuicao.num.instancias))
 ```{r}
 distribuicao.geral = ggplot(data, aes(time_diff, fill=factor(hours))) +
   geom_histogram(bins = 10, position = "dodge")+ facet_grid(n_iterations~n_instances)   +
-  labs(x="Tempo de Resposta", fill="Hor·rio do experimento")
+  labs(x="Tempo de Resposta", fill="Hor√°rio do experimento")
 
 ## Para adicionar o label geral
 #label.top = label.geral.top(distribuicao.geral)
@@ -281,9 +280,9 @@ grid.draw(label.geral.top.e.right(distribuicao.geral))
 
 ```
 
-Como j· observado anteriormente, o sistema apresenta um tempo de resposta mÈdio bem menor quando a quantidade de requisiÁıes por minuto È de 10. E, especialmente para 40 requisiÁıes/minuto, o uso de 2 inst‚ncias diminue consideravelmente o tempo de resposta.
+Como j√° observado anteriormente, o sistema apresenta um tempo de resposta m√©dio bem menor quando a quantidade de requisi√ß√µes por minuto √© de 10. E, especialmente para 40 requisi√ß√µes/minuto, o uso de 2 inst√¢ncias diminue consideravelmente o tempo de resposta.
 
-####Intervalo de confianÁa para o tempo de resposta
+####Intervalo de confian√ßa para o tempo de resposta
 
 ```{r}
 experiment = sample_n(data, 500, replace = TRUE)
@@ -310,12 +309,12 @@ df %>% ggplot(aes(x = medida, ymin = X2.5., ymax = X97.5.)) +
 
 ```
 
-####Tempo de resposta considerando a sequÍncia de requisiÁıes
+####Tempo de resposta considerando a sequ√™ncia de requisi√ß√µes
 
-Agora iremos analisar o tempo de resposta das requisiÁ„o levando em conta a "posiÁ„o" da requisiÁ„o (a primeira requisiÁ„o, segunda, terceira..) 
+Agora iremos analisar o tempo de resposta das requisi√ß√£o levando em conta a "posi√ß√£o" da requisi√ß√£o (a primeira requisi√ß√£o, segunda, terceira..) 
 
 ```{r}
-# Mostrar que primeiras requisi√ß√µes s√£o mais r√°pidas que as demais (que d√° para pegar pelo curr_iteration)
+# Mostrar que primeiras requisi√ß√µes s√£o mais r√°pidas que as demais (que d√£o para pegar pelo curr_iteration)
 
 data.first.iterations <- data %>%
   group_by(curr_iteration)
@@ -328,6 +327,15 @@ ggplot(data.first.iterations,aes(x=curr_iteration, y=time_diff)) +
 
 --------
 
-###ConsideraÁıes Finais 
+###Considera√ß√µes Finais 
 
+O projeto de medi√ß√£o consistiu em uma boa oportunidade de avaliar a escalabilidade do servi√ßo de predi√ß√£o best-trip-recommender antes de ser divulgado para o p√∫blico. Por meio destas medi√ß√µes, pudemos identificar um problema grave: 
+
+* O best-trip-recommender ao receber mais de uma requisi√ß√£o consecutiva, de modo que requisi√ß√£o n + 1 chegue antes da requisi√ß√£o n seja respondida, acumula todas as respostas at√© que a √∫ltima seja executada.
+
+Apesar deste problema, pudemos identificar uma caracter√≠stica bastante satisfat√≥ria: 
+
+* Quando aumentamos o n√∫mero de inst√¢ncias as requisi√ß√µes tendem a ser respondidas mais rapidamente.
+
+ Visto isso, podemos concluir que o sistema medido precisa de ajustes para resolver o problema encontrado, mas ao passo que esse seja resolvido, n√£o parece haver mais empecilhos para que o sistema possa ser consider√°vel escal√°vel. Vale ressaltar que ap√≥s as modifica√ß√µes necess√°rias, seria interessante uma nova medi√ß√£o para averiguar se o sistema se encontra realmente com escalabilidade satisfat√≥ria.
 
