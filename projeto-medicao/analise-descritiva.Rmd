@@ -33,11 +33,7 @@ label.geral.top <- function(distribuicao, nome.label) {
                         # New strip spans columns 4 to 8
   distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
-<<<<<<< HEAD
        textGrob(nome.label)), t=6, l=4, b=6, r=8, name = c("a", "b"))
-=======
-       textGrob("Número de Instâncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
->>>>>>> 3f67bd38cf16a048034fac6ead7c4ff8e5f81d08
 
   # Add small gap between strips - below row 6
   distribuicao.grob <- gtable_add_rows(distribuicao.grob, unit(2/10, "line"), 6)
@@ -61,12 +57,8 @@ label.geral.top.e.right <- function(distribuicao, nome.label.top, nome.label.rig
                         # New strip spans columns 4 to 8
   distribuicao.grob <- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
-<<<<<<< HEAD
        textGrob(nome.label.top)), t=6, l=4, b=6, r=8, name = c("a", "b"))
-=======
-       textGrob("Número de Instâncias")), t=6, l=4, b=6, r=8, name = c("a", "b"))
->>>>>>> 3f67bd38cf16a048034fac6ead7c4ff8e5f81d08
-  
+
   distribuicao.grob<- gtable_add_grob(distribuicao.grob, 
     list(rectGrob(gp = gpar(col = NA, fill = "gray85", size = .5)),
        textGrob("Nº de Requisições / min", rot = -90)), 
@@ -127,8 +119,8 @@ label.geral.right <- function(distribuicao, nome){
 
 ###Definição de Fatores e Níveis
 
-	As métricas tempo de resposta de requisição e tempo de resposta da rede serão utilizados para avaliar a escalabilidade do sistema, quando existe variação no número de instâncias rodando, número de requisições e horário das requisições.  
-  Os níveis de cada fator serão definidos de acordo com os seguintes valores:
+	As m�tricas tempo de resposta de requisição e tempo de resposta da rede serão utilizados para avaliar a escalabilidade do sistema, quando existe variação no número de instâncias rodando, número de requisições e horário das requisições.  
+  Os n�veis de cada fator serão definidos de acordo com os seguintes valores:
   
 1. Número de Instâncias: 
    * 1 instância  
@@ -273,15 +265,7 @@ data.group
 ggplot(data, aes(as.factor(group), time_diff)) +
   geom_boxplot() +
   labs(x="Grupos", y="Tempo de Resposta")+
-<<<<<<< HEAD
   ggtitle("Gr�fico de rela��o entre fatores e tempo de resposta")	 +
-  scale_color_manual(labels = c("1 - ", "T888"), values = c("blue", "red")) +
-  theme_bw() +
-  guides(color=guide_legend("my title"))  # add guide properties by aesthetic
-
-=======
-  ggtitle("Gráfico de relação entre fatores e tempo de resposta")	
->>>>>>> 3f67bd38cf16a048034fac6ead7c4ff8e5f81d08
 
 #Summary de cada grupo
 tapply(data$time_diff,data$group,summary)
@@ -340,9 +324,6 @@ Como já observado anteriormente, o sistema apresenta um tempo de resposta médi
 -------------
 
 ####Intervalo de confian�a para o tempo de resposta
-=======
-####Intervalo de confiança para o tempo de resposta
->>>>>>> 3f67bd38cf16a048034fac6ead7c4ff8e5f81d08
 
 #ESCOLHER ENTRE 1 E 2 
 
@@ -418,7 +399,6 @@ medidas.por.grupo.geral %>%
 
 ```
 
-<<<<<<< HEAD
 
 --------------------
 
@@ -490,16 +470,11 @@ ic %>%
 ```
 
 
------
+=======
 
 ####Tempo de resposta considerando a sequ�ncia de requisi��es
 
 Agora iremos analisar o tempo de resposta das requisi��o levando em conta o �ndice da requisi��o (a primeira requisi��o, segunda, terceira..) 
-=======
-####Tempo de resposta considerando a sequência de requisições
-
-Agora iremos analisar o tempo de resposta das requisição levando em conta a "posição" da requisição (a primeira requisição, segunda, terceira..) 
->>>>>>> 3f67bd38cf16a048034fac6ead7c4ff8e5f81d08
 
 ```{r}
 # Mostrar que primeiras requisições são mais rápidas que as demais (que dão para pegar pelo curr_iteration)
